@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useTheme, type Theme } from "../context/ThemeContext";
 import styles from "./ThemeToggle.module.css";
 
@@ -65,13 +66,18 @@ const ContrastIcon = () => (
   </svg>
 );
 
-const themes: { id: Theme; label: string; icon: React.FC }[] = [
-  { id: "light", label: "亮色模式", icon: SunIcon },
-  { id: "dark", label: "深色模式", icon: MoonIcon },
-  { id: "contrast", label: "高对比度模式", icon: ContrastIcon },
+const themes: { id: Theme; icon: React.FC; labelKey: string }[] = [
+  { id: "light", icon: SunIcon, labelKey: "theme.light" },
+  { id: "dark", icon: MoonIcon, labelKey: "theme.dark" },
+  { id: "contrast", icon: ContrastIcon, labelKey: "theme.contrast" },
 ];
 
-const ThemeToggle = () => {
+interface ThemeToggleProps {
+  className?: string;
+}
+
+const ThemeToggle = ({ className = "" }: ThemeToggleProps) => {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
   const radioRefs = useRef<HTMLButtonElement[]>([]);
 
@@ -114,11 +120,11 @@ const ThemeToggle = () => {
 
   return (
     <div
-      className={styles.toggleGroup}
+      className={`${styles.toggleGroup} ${className}`.trim()}
       role="radiogroup"
-      aria-label="主题选择"
+      aria-label={t("theme.label")}
     >
-      {themes.map(({ id, label, icon: Icon }, index) => {
+      {themes.map(({ id, labelKey, icon: Icon }, index) => {
         const isActive = theme === id;
         return (
           <button
@@ -131,7 +137,7 @@ const ThemeToggle = () => {
             className={`${styles.toggleBtn} ${isActive ? styles.active : ""}`}
             onClick={() => setTheme(id)}
             onKeyDown={(e) => handleKeyDown(e, index)}
-            aria-label={label}
+            aria-label={t(labelKey)}
             aria-checked={isActive}
             tabIndex={isActive ? 0 : -1}
           >

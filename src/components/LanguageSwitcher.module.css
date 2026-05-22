@@ -1,0 +1,39 @@
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--divider-color, rgba(128, 128, 128, 0.2));
+  border-radius: 6px;
+  background: var(--nav-bg, transparent);
+  color: var(--text-muted, #888);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn:hover {
+  background-color: var(--hover-bg, rgba(128, 128, 128, 0.1));
+  color: var(--primary-pink, #ff85a2);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary-pink, #ff85a2);
+  outline-offset: 2px;
+}
+
+[data-theme="contrast"] .btn {
+  border-color: var(--contrast-border, currentColor);
+  color: var(--contrast-text, currentColor);
+  background: var(--contrast-bg, #000);
+}
+
+[data-theme="contrast"] .btn:hover {
+  background: var(--contrast-hover-bg, #222);
+  color: var(--contrast-accent, #ff0);
+  outline: 2px solid var(--contrast-accent, #ff0);
+}

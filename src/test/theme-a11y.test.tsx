@@ -2,15 +2,22 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { LanguageProvider } from "../context/LanguageContext";
 import ThemeToggle from "../components/ThemeToggle";
 
 const STORAGE_KEY = "transcircle-theme";
 
 /**
- * Helper: render a component within ThemeProvider.
+ * Helper: render a component within both LanguageProvider and ThemeProvider.
+ * Forces zh-CN in localStorage so tests match Chinese labels.
  */
-const renderWithTheme = (ui: React.ReactElement) => {
-  return render(<ThemeProvider>{ui}</ThemeProvider>);
+const renderWithProviders = (ui: React.ReactElement) => {
+  localStorage.setItem("transcircle-lang", "zh-CN");
+  return render(
+    <LanguageProvider>
+      <ThemeProvider>{ui}</ThemeProvider>
+    </LanguageProvider>
+  );
 };
 
 /**
@@ -30,67 +37,73 @@ describe("Theme system accessibility regression", () => {
 
   describe("ThemeContext validation", () => {
     it("should default to 'light' when localStorage is empty", () => {
-      renderWithTheme(<div data-testid="child"></div>);
+      renderWithProviders(<div data-testid="child"></div>);
       expect(getCurrentTheme()).toBe("light");
     });
 
     it("should fallback to 'light' for invalid stored theme values", () => {
       localStorage.setItem(STORAGE_KEY, "hacker-theme");
-      renderWithTheme(<div data-testid="child"></div>);
+      renderWithProviders(<div data-testid="child"></div>);
       expect(getCurrentTheme()).toBe("light");
     });
 
     it("should clean up invalid stored theme values", () => {
       localStorage.setItem(STORAGE_KEY, "invalid");
-      renderWithTheme(<div data-testid="child"></div>);
+      renderWithProviders(<div data-testid="child"></div>);
       // Invalid value should be removed from localStorage
       expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
     });
 
     it("should respect valid stored theme 'dark'", () => {
       localStorage.setItem(STORAGE_KEY, "dark");
-      renderWithTheme(<div data-testid="child"></div>);
+      renderWithProviders(<div data-testid="child"></div>);
       expect(getCurrentTheme()).toBe("dark");
     });
 
     it("should respect valid stored theme 'contrast'", () => {
       localStorage.setItem(STORAGE_KEY, "contrast");
-      renderWithTheme(<div data-testid="child"></div>);
+      renderWithProviders(<div data-testid="child"></div>);
       expect(getCurrentTheme()).toBe("contrast");
     });
 
     it("should gracefully handle localStorage read errors", () => {
-      const originalGetItem = Storage.prototype.getItem;
-      Storage.prototype.getItem = vi.fn(() => {
+      const originalGetItem = localStorage.getItem;
+      localStorage.getItem = vi.fn(() => {
         throw new Error("Storage disabled");
       });
 
-      renderWithTheme(<div data-testid="child"></div>);
+      renderWithProviders(<div data-testid="child"></div>);
       expect(getCurrentTheme()).toBe("light");
 
-      Storage.prototype.getItem = originalGetItem;
+      localStorage.getItem = originalGetItem;
     });
 
     it("should gracefully handle localStorage write errors", () => {
-      const originalSetItem = Storage.prototype.setItem;
-      Storage.prototype.setItem = vi.fn(() => {
+      localStorage.setItem("transcircle-lang", "zh-CN");
+      render(
+        <LanguageProvider>
+          <ThemeProvider><ThemeToggle /></ThemeProvider>
+        </LanguageProvider>
+      );
+
+      const originalSetItem = localStorage.setItem;
+      localStorage.setItem = vi.fn(() => {
         throw new Error("Quota exceeded");
       });
 
-      renderWithTheme(<ThemeToggle />);
       const darkRadio = screen.getByRole("radio", { name: "深色模式" });
 
       // Should not throw despite localStorage failure
       expect(() => fireEvent.click(darkRadio)).not.toThrow();
       expect(getCurrentTheme()).toBe("dark");
 
-      Storage.prototype.setItem = originalSetItem;
+      localStorage.setItem = originalSetItem;
     });
   });
 
   describe("ThemeToggle accessibility", () => {
     it("should render three radio buttons with correct labels", () => {
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       expect(screen.getByRole("radio", { name: "亮色模式" })).toBeInTheDocument();
       expect(screen.getByRole("radio", { name: "深色模式" })).toBeInTheDocument();
@@ -98,7 +111,7 @@ describe("Theme system accessibility regression", () => {
     });
 
     it("should wrap buttons in a radiogroup with correct aria-label", () => {
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const group = screen.getByRole("radiogroup", { name: "主题选择" });
       expect(group).toBeInTheDocument();
@@ -106,7 +119,7 @@ describe("Theme system accessibility regression", () => {
     });
 
     it("should set aria-checked='true' only on the active theme radio", () => {
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const lightRadio = screen.getByRole("radio", { name: "亮色模式" });
       const darkRadio = screen.getByRole("radio", { name: "深色模式" });
@@ -119,7 +132,7 @@ describe("Theme system accessibility regression", () => {
     });
 
     it("should update aria-checked when theme changes", () => {
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const lightRadio = screen.getByRole("radio", { name: "亮色模式" });
       const darkRadio = screen.getByRole("radio", { name: "深色模式" });
@@ -139,7 +152,7 @@ describe("Theme system accessibility regression", () => {
     });
 
     it("should update data-theme attribute on the document element", () => {
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const darkRadio = screen.getByRole("radio", { name: "深色模式" });
       fireEvent.click(darkRadio);
@@ -151,7 +164,7 @@ describe("Theme system accessibility regression", () => {
     });
 
     it("should persist theme selection to localStorage", () => {
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const darkRadio = screen.getByRole("radio", { name: "深色模式" });
       fireEvent.click(darkRadio);
@@ -160,7 +173,7 @@ describe("Theme system accessibility regression", () => {
     });
 
     it("should manage tabIndex so only active radio is tabbable", () => {
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const lightRadio = screen.getByRole("radio", { name: "亮色模式" });
       const darkRadio = screen.getByRole("radio", { name: "深色模式" });
@@ -173,7 +186,7 @@ describe("Theme system accessibility regression", () => {
 
     it("should support arrow key navigation", async () => {
       const user = userEvent.setup();
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const lightRadio = screen.getByRole("radio", { name: "亮色模式" });
       const darkRadio = screen.getByRole("radio", { name: "深色模式" });
@@ -190,7 +203,7 @@ describe("Theme system accessibility regression", () => {
 
     it("should cycle with arrow keys (wrap around)", async () => {
       const user = userEvent.setup();
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const lightRadio = screen.getByRole("radio", { name: "亮色模式" });
       const contrastRadio = screen.getByRole("radio", { name: "高对比度模式" });
@@ -207,7 +220,7 @@ describe("Theme system accessibility regression", () => {
 
     it("should support Home/End keys", async () => {
       const user = userEvent.setup();
-      renderWithTheme(<ThemeToggle />);
+      renderWithProviders(<ThemeToggle />);
 
       const lightRadio = screen.getByRole("radio", { name: "亮色模式" });
       const contrastRadio = screen.getByRole("radio", { name: "高对比度模式" });
@@ -236,7 +249,7 @@ describe("Theme system accessibility regression", () => {
 
       // Suppress console.error for this expected error
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      expect(() => render(<BadComponent />)).toThrow("useTheme must be used within a ThemeProvider");
+      expect(() => render(<LanguageProvider><BadComponent /></LanguageProvider>)).toThrow("useTheme must be used within a ThemeProvider");
       consoleSpy.mockRestore();
     });
   });

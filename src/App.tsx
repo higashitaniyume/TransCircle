@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Navbar from './components/Navbar';
 import FloatingTOC, { type TOCItem } from './components/FloatingTOC';
 import LicenseFooter from './components/LicenseFooter';
@@ -21,86 +22,92 @@ const BlueskyIcon = () => (
   </svg>
 );
 
-const TOC_ITEMS: TOCItem[] = [
-  { href: '#about', label: '关于项目' },
-  { href: '#join',  label: '加入项目' },
-  { href: '#follow', label: '关注我们' },
+const makeMobileLinks = (t: (key: string) => string, close: () => void) => [
+  { key: '#about',  node: <a href="#about" onClick={close}>{t('toc.about')}</a> },
+  { key: '#join',   node: <a href="#join" onClick={close}>{t('toc.join')}</a> },
+  { key: '#follow', node: <a href="#follow" onClick={close}>{t('toc.follow')}</a> },
 ];
 
-const mobileLinks = (close: () => void) =>
-  TOC_ITEMS.map(({ href, label }) => ({
-    key: href,
-    node: <a href={href} onClick={close}>{label}</a>,
-  }));
+const App = () => {
+  const { t } = useTranslation();
 
-const App = () => (
-  <div className={styles.appContainer}>
-    <Navbar
-      customMobileLinkLabel="目录"
-      customMobileLinks={mobileLinks}
-    />
-    <FloatingTOC items={TOC_ITEMS} />
+  const TOC_ITEMS: TOCItem[] = [
+    { href: '#about', label: t('toc.about') },
+    { href: '#join',  label: t('toc.join') },
+    { href: '#follow', label: t('toc.follow') },
+  ];
 
-    <main className={styles.mainContent}>
-      <header className={styles.contentHeader}>
-        <h1 className={styles.mainTitle}>TransCircle Project</h1>
-        <p className={styles.subTitle}>我们的存在，就是对恶意最大的反抗。</p>
-      </header>
+  const mobileLinks = (close: () => void) => makeMobileLinks(t, close);
 
-      <section id="about" className={styles.introSection}>
-        <p className={styles.greeting}>您好！我们正在进行 TransCircle Project 的初期准备。</p>
-        <div className={styles.readmeContent}>
-          <p>长此以往，中文 MtF 社群有个很奇怪的现象：我们确实有比较全面的社群 wiki，HRT 指南等，但几乎没有一个能见证我们社群存在与抗争的地方。</p>
-          <p>跨性别社群流动性极大，这里发生过很多故事，但没有人把它们完整地记录下来过。</p>
-          <p>因此，这个女性倾向跨性别社群史官工程应运而生。我们希望，把我们的故事归档记录，团结社群，争取跨性别权利。</p>
-        </div>
-        <p className={styles.emphasis}>
-          我们深信历史终将向前。这份记录，就是我们走过长夜的铁证。
-        </p>
-      </section>
+  return (
+    <div className={styles.appContainer}>
+      <Navbar
+        customMobileLinkLabel={t('nav.toc')}
+        customMobileLinks={mobileLinks}
+      />
+      <FloatingTOC items={TOC_ITEMS} />
 
-      <section id="join" className={styles.actionSection}>
-        <h2 className={styles.sectionHeading}>加入项目</h2>
-        <div className={styles.ctaRow}>
-          <a href="https://transcircle.org/s/join" className={styles.ctaPrimary} target="_blank" rel="noopener noreferrer">
-            填写申请表单
-          </a>
-          <a href="https://transcircle.org/s/x-chat" className={styles.ctaSecondary} target="_blank" rel="noopener noreferrer">
-            加入 X 聊天群
-          </a>
-        </div>
-      </section>
+      <main className={styles.mainContent}>
+        <header className={styles.contentHeader}>
+          <h1 className={styles.mainTitle}>TransCircle Project</h1>
+          <p className={styles.subTitle}>{t('app.subtitle')}</p>
+        </header>
 
-      <section id="follow" className={styles.followSection}>
-        <h2 className={styles.sectionHeading}>关注我们</h2>
-        <ul className={styles.socialList}>
-          <li>
-            <a href="https://github.com/TransCircle/TransCircle" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
-              <span className={styles.socialIcon}><GitHubIcon /></span>
-              <span className={styles.socialName}>GitHub</span>
-              <span className={styles.socialHandle}>github.com/TransCircle/TransCircle</span>
+        <section id="about" className={styles.introSection}>
+          <p className={styles.greeting}>{t('app.greeting')}</p>
+          <div className={styles.readmeContent}>
+            <p>{t('app.aboutP1')}</p>
+            <p>{t('app.aboutP2')}</p>
+            <p>{t('app.aboutP3')}</p>
+          </div>
+          <p className={styles.emphasis}>
+            {t('app.emphasis')}
+          </p>
+        </section>
+
+        <section id="join" className={styles.actionSection}>
+          <h2 className={styles.sectionHeading}>{t('app.joinHeading')}</h2>
+          <div className={styles.ctaRow}>
+            <a href="https://transcircle.org/s/join" className={styles.ctaPrimary} target="_blank" rel="noopener noreferrer">
+              {t('app.ctaApply')}
             </a>
-          </li>
-          <li>
-            <a href="https://x.com/TransCircleOrg" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
-              <span className={styles.socialIcon}><XIcon /></span>
-              <span className={styles.socialName}>X (Twitter)</span>
-              <span className={styles.socialHandle}>@TransCircleOrg</span>
+            <a href="https://transcircle.org/s/x-chat" className={styles.ctaSecondary} target="_blank" rel="noopener noreferrer">
+              {t('app.ctaChat')}
             </a>
-          </li>
-          <li>
-            <a href="https://bsky.app/profile/TransCircle.org" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
-              <span className={styles.socialIcon}><BlueskyIcon /></span>
-              <span className={styles.socialName}>Bluesky</span>
-              <span className={styles.socialHandle}>TransCircle.org</span>
-            </a>
-          </li>
-        </ul>
-      </section>
-    </main>
+          </div>
+        </section>
 
-    <LicenseFooter />
-  </div>
-);
+        <section id="follow" className={styles.followSection}>
+          <h2 className={styles.sectionHeading}>{t('app.followHeading')}</h2>
+          <ul className={styles.socialList}>
+            <li>
+              <a href="https://github.com/TransCircle/TransCircle" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
+                <span className={styles.socialIcon}><GitHubIcon /></span>
+                <span className={styles.socialName}>GitHub</span>
+                <span className={styles.socialHandle}>github.com/TransCircle/TransCircle</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://x.com/TransCircleOrg" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
+                <span className={styles.socialIcon}><XIcon /></span>
+                <span className={styles.socialName}>X (Twitter)</span>
+                <span className={styles.socialHandle}>@TransCircleOrg</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://bsky.app/profile/TransCircle.org" className={styles.socialLink} target="_blank" rel="noopener noreferrer">
+                <span className={styles.socialIcon}><BlueskyIcon /></span>
+                <span className={styles.socialName}>Bluesky</span>
+                <span className={styles.socialHandle}>TransCircle.org</span>
+              </a>
+            </li>
+          </ul>
+        </section>
+      </main>
+
+      <LicenseFooter />
+    </div>
+  );
+};
 
 export default App;

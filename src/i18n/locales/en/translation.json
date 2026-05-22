@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "TransCircle Project | Chinese MtF Transgender Community Archive",
+    "description": "TransCircle Project is a community archive for the Chinese MtF transgender community: archiving stories, documenting history, uniting peers, and fighting for transgender rights. Our very existence is the greatest act of defiance against malice."
+  },
+  "app": {
+    "subtitle": "Our very existence is the greatest act of defiance against malice.",
+    "greeting": "Welcome! We are in the early preparation stage of the TransCircle Project.",
+    "aboutP1": "For a long time, the Chinese MtF community has had a peculiar phenomenon: we have fairly comprehensive community wikis and HRT guides, but almost no place that bears witness to our community's existence and resistance.",
+    "aboutP2": "The transgender community is highly fluid; many stories have happened here, but no one has ever fully documented them.",
+    "aboutP3": "Thus, this transfeminine community archive project was born. We hope to archive our stories, unite the community, and fight for transgender rights.",
+    "emphasis": "We firmly believe that history will move forward. This record is the testimony that we walked through the long night.",
+    "joinHeading": "Join the Project",
+    "followHeading": "Follow Us",
+    "ctaApply": "Submit Application Form",
+    "ctaChat": "Join X Chat Group"
+  },
+  "nav": {
+    "home": "Home",
+    "links": "Links",
+    "blog": "Blog",
+    "search": "Search",
+    "stories": "Story Collection (WIP)",
+    "archive": "Archive (WIP)",
+    "community": "Community (WIP)",
+    "toc": "Table of Contents",
+    "theme": "Theme",
+    "language": "Language",
+    "ariaMainNav": "Main navigation",
+    "ariaOpenMenu": "Open menu",
+    "ariaCloseMenu": "Close menu"
+  },
+  "toc": {
+    "about": "About",
+    "join": "Join",
+    "follow": "Follow",
+    "defaultLabel": "Table of Contents"
+  },
+  "footer": {
+    "heading": "LICENSE",
+    "licenseText1": "Text and materials on this page: CC BY 4.0 or later",
+    "licenseText2": "For materials provided by others, their copyright terms apply. A separate copyright page will be provided."
+  },
+  "theme": {
+    "label": "Theme selection",
+    "light": "Light mode",
+    "dark": "Dark mode",
+    "contrast": "High contrast mode"
+  },
+  "lang": {
+    "switchTo": "中文",
+    "label": "Switch to Chinese"
+  }
+}

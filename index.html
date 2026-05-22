@@ -185,6 +185,25 @@
     <script>
       (function() {
         try {
+          // ── Language detection ──
+          var langKey = 'transcircle-lang';
+          var storedLang = localStorage.getItem(langKey);
+          var lang = 'zh-CN';
+          if (storedLang && (storedLang === 'zh-CN' || storedLang === 'en')) {
+            lang = storedLang;
+          } else {
+            try {
+              var navLang = navigator.language;
+              if (navLang) {
+                var l = navLang.toLowerCase();
+                if (l.indexOf('zh') === 0) lang = 'zh-CN';
+                else if (l.indexOf('en') === 0) lang = 'en';
+              }
+            } catch(e) {}
+          }
+          document.documentElement.lang = lang;
+
+          // ── Theme detection ──
           var theme = localStorage.getItem('transcircle-theme');
           if (theme && ['light', 'dark', 'contrast'].includes(theme)) {
             document.documentElement.setAttribute('data-theme', theme);
@@ -192,47 +211,91 @@
             document.documentElement.setAttribute('data-theme', 'dark');
           }
         } catch (e) {
-          // 静默回退：不设置 data-theme，等待 React 接管
+          // Silently fall back: no data-theme set, React will take over
         }
       })();
     </script>
   </head>
   <body>
     <noscript>
-      <article lang="zh-CN" style="max-width:720px;margin:2rem auto;padding:1rem 1.25rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#222;line-height:1.7;">
-        <header>
-          <h1>TransCircle Project</h1>
-          <p><strong>中文 MtF 跨性别社群史官工程。</strong>我们的存在，就是对恶意最大的反抗。</p>
-        </header>
-        <section>
-          <h2>关于项目</h2>
-          <p>您好！我们正在进行 TransCircle Project 的初期准备。</p>
-          <p>长此以往，中文 MtF 社群有个很奇怪的现象：我们确实有比较全面的社群 wiki、HRT 指南等，但几乎没有一个能见证我们社群存在与抗争的地方。</p>
-          <p>跨性别社群流动性极大，这里发生过很多故事，但没有人把它们完整地记录下来过。</p>
-          <p>因此，这个女性倾向跨性别社群史官工程应运而生。我们希望，把我们的故事归档记录，团结社群，争取跨性别权利。</p>
-          <p>我们深信历史终将向前。这份记录，就是我们走过长夜的铁证。</p>
-        </section>
-        <section>
-          <h2>加入项目</h2>
-          <ul>
-            <li><a href="https://transcircle.org/s/join" rel="noopener">填写申请表单</a></li>
-            <li><a href="https://transcircle.org/s/x-chat" rel="noopener">加入 X 聊天群</a></li>
-          </ul>
-        </section>
-        <section>
-          <h2>关注我们</h2>
-          <ul>
-            <li>GitHub：<a href="https://github.com/TransCircle/TransCircle" rel="noopener">github.com/TransCircle/TransCircle</a></li>
-            <li>X (Twitter)：<a href="https://x.com/TransCircleOrg" rel="noopener">@TransCircleOrg</a></li>
-            <li>Bluesky：<a href="https://bsky.app/profile/TransCircle.org" rel="noopener">TransCircle.org</a></li>
-          </ul>
-        </section>
-        <footer>
-          <h2>LICENSE</h2>
-          <p>对于此页面的文字和素材：CC BY 4.0 or later。</p>
-          <p>对于其他人提供的材料，依照她们的版权要求。届时我们会提供单独的版权页面。</p>
-        </footer>
-      </article>
+      <style>
+        .noscript-lang { display: none; }
+        html[lang="zh-CN"] .noscript-zh,
+        html:not([lang]) .noscript-zh { display: block; }
+        html[lang="en"] .noscript-en { display: block; }
+      </style>
+      <div class="noscript-lang noscript-zh">
+        <article lang="zh-CN" style="max-width:720px;margin:2rem auto;padding:1rem 1.25rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#222;line-height:1.7;">
+          <header>
+            <h1>TransCircle Project</h1>
+            <p><strong>中文 MtF 跨性别社群史官工程。</strong>我们的存在，就是对恶意最大的反抗。</p>
+          </header>
+          <section>
+            <h2>关于项目</h2>
+            <p>您好！我们正在进行 TransCircle Project 的初期准备。</p>
+            <p>长此以往，中文 MtF 社群有个很奇怪的现象：我们确实有比较全面的社群 wiki、HRT 指南等，但几乎没有一个能见证我们社群存在与抗争的地方。</p>
+            <p>跨性别社群流动性极大，这里发生过很多故事，但没有人把它们完整地记录下来过。</p>
+            <p>因此，这个女性倾向跨性别社群史官工程应运而生。我们希望，把我们的故事归档记录，团结社群，争取跨性别权利。</p>
+            <p>我们深信历史终将向前。这份记录，就是我们走过长夜的铁证。</p>
+          </section>
+          <section>
+            <h2>加入项目</h2>
+            <ul>
+              <li><a href="https://transcircle.org/s/join" rel="noopener">填写申请表单</a></li>
+              <li><a href="https://transcircle.org/s/x-chat" rel="noopener">加入 X 聊天群</a></li>
+            </ul>
+          </section>
+          <section>
+            <h2>关注我们</h2>
+            <ul>
+              <li>GitHub：<a href="https://github.com/TransCircle/TransCircle" rel="noopener">github.com/TransCircle/TransCircle</a></li>
+              <li>X (Twitter)：<a href="https://x.com/TransCircleOrg" rel="noopener">@TransCircleOrg</a></li>
+              <li>Bluesky：<a href="https://bsky.app/profile/TransCircle.org" rel="noopener">TransCircle.org</a></li>
+            </ul>
+          </section>
+          <footer>
+            <h2>LICENSE</h2>
+            <p>对于此页面的文字和素材：CC BY 4.0 or later。</p>
+            <p>对于其他人提供的材料，依照她们的版权要求。届时我们会提供单独的版权页面。</p>
+          </footer>
+        </article>
+      </div>
+      <div class="noscript-lang noscript-en">
+        <article lang="en" style="max-width:720px;margin:2rem auto;padding:1rem 1.25rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#222;line-height:1.7;">
+          <header>
+            <h1>TransCircle Project</h1>
+            <p><strong>Chinese MtF Transgender Community Archive.</strong>Our very existence is the greatest act of defiance against malice.</p>
+          </header>
+          <section>
+            <h2>About the Project</h2>
+            <p>Welcome! We are in the early preparation stage of the TransCircle Project.</p>
+            <p>For a long time, the Chinese MtF community has had a peculiar phenomenon: we have fairly comprehensive community wikis and HRT guides, but almost no place that bears witness to our community's existence and resistance.</p>
+            <p>The transgender community is highly fluid; many stories have happened here, but no one has ever fully documented them.</p>
+            <p>Thus, this transfeminine community archive project was born. We hope to archive our stories, unite the community, and fight for transgender rights.</p>
+            <p>We firmly believe that history will move forward. This record is the testimony that we walked through the long night.</p>
+          </section>
+          <section>
+            <h2>Join the Project</h2>
+            <ul>
+              <li><a href="https://transcircle.org/s/join" rel="noopener">Submit Application Form</a></li>
+              <li><a href="https://transcircle.org/s/x-chat" rel="noopener">Join X Chat Group</a></li>
+            </ul>
+          </section>
+          <section>
+            <h2>Follow Us</h2>
+            <ul>
+              <li>GitHub: <a href="https://github.com/TransCircle/TransCircle" rel="noopener">github.com/TransCircle/TransCircle</a></li>
+              <li>X (Twitter): <a href="https://x.com/TransCircleOrg" rel="noopener">@TransCircleOrg</a></li>
+              <li>Bluesky: <a href="https://bsky.app/profile/TransCircle.org" rel="noopener">TransCircle.org</a></li>
+            </ul>
+          </section>
+          <footer>
+            <h2>LICENSE</h2>
+            <p>Text and materials on this page: CC BY 4.0 or later.</p>
+            <p>For materials provided by others, their copyright terms apply. A separate copyright page will be provided.</p>
+          </footer>
+        </article>
+      </div>
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
